@@ -13,11 +13,12 @@
         </div>
         <div class="inputContainerShort">
           <span>平衡时间:</span>
-          <el-input
+          <el-date-picker
             size="mini"
-            placeholder="请输入内容"
-            v-model="input1">
-          </el-input>
+            v-model="balanceTime"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
         </div>
         <div class="inputContainerShort" style="width: 350px;">
           <span>生产分厂:</span>
@@ -29,11 +30,12 @@
         </div>
         <div class="inputContainerShort">
           <span>库存时间:</span>
-          <el-input
+          <el-date-picker
             size="mini"
-            placeholder="请输入内容"
-            v-model="input1">
-          </el-input>
+            v-model="balanceTime"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
         </div>
       </div>
       <div class="downer">
@@ -101,6 +103,7 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
+      balanceTime: '', // 平衡时间
       input1: '',
       input2: '',
       options: [{
@@ -156,7 +159,7 @@ export default {
 }
 .chooseArea {
   width: 100%;
-  height: 100px;
+  height: 76px;
   padding: 20px;
   display: flex;
   flex-direction: column;
