@@ -1,5 +1,10 @@
 <template>
   <div class="hello" id="wrapper">
+    <replaceRecord></replaceRecord>
+    <brandBalance></brandBalance>
+    <totalBalance></totalBalance>
+    <stemsBalance></stemsBalance>
+    <sendBalance></sendBalance>
     <div class="header">
       <span style="padding-left: 20px;">配方平衡</span>
     </div>
@@ -8,11 +13,11 @@
       <!--  功能按钮显示行  -->
       <div class="buttonRow">
         <el-row>
-          <el-button size="small" type="primary">打印替换记录</el-button>
-          <el-button size="small" type="primary">打印牌号平衡</el-button>
-          <el-button size="small" type="primary">打印全部平衡</el-button>
-          <el-button size="small" type="primary">打印梗丝平衡</el-button>
-          <el-button size="small" type="primary">发送平衡</el-button>
+          <el-button size="small" type="primary" @click="openReplaceRcord">打印替换记录</el-button>
+          <el-button size="small" type="primary" @click="openBrandBalance">打印牌号平衡</el-button>
+          <el-button size="small" type="primary" @click="openTotalBalance">打印全部平衡</el-button>
+          <el-button size="small" type="primary" @click="openStemsBalance">打印梗丝平衡</el-button>
+          <el-button size="small" type="primary" @click="openSendBalance">发送平衡</el-button>
           <el-button size="small" type="primary">关闭</el-button>
           <el-button size="small" @click="getData">output params</el-button>
         </el-row>
@@ -35,6 +40,7 @@
             size="mini"
             v-model="balanceTime"
             type="date"
+            :change="getData()"
             placeholder="选择日期">
           </el-date-picker>
         </div>
@@ -54,6 +60,7 @@
             size="mini"
             v-model="stockTime"
             type="date"
+            :change="getData()"
             placeholder="选择日期">
           </el-date-picker>
         </div>
@@ -110,7 +117,9 @@
         </div>
       </div>
     </div>
+    <!--  原料平衡  -->
     <div class="materialBalance">
+      <!--   原料平衡数据   -->
       <div class="left">
         <div class="header">
           <span style="padding-left: 20px;">原料平衡数据</span>
@@ -125,6 +134,7 @@
           style="width: 100%"
           @selection-change="handleSelectionChange">
           <el-table-column
+            fixed
             type="selection"
             width="55">
           </el-table-column>
@@ -145,6 +155,7 @@
           </el-table-column>
         </el-table>
       </div>
+      <!--   此原料用于以下牌号的生成   -->
       <div class="right">
         <div class="header">
           <span style="padding-left: 20px;">此原料用于以下牌号的生成</span>
@@ -160,6 +171,7 @@
             style="width: 100%"
             @selection-change="handleSelectionChange">
             <el-table-column
+              fixed
               type="selection"
               width="55">
             </el-table-column>
@@ -178,17 +190,20 @@
               label="地址"
               width="200"
               show-overflow-tooltip>
-            </el-table-column><el-table-column
+            </el-table-column>
+            <el-table-column
               prop="address"
               label="地址"
               width="200"
               show-overflow-tooltip>
-            </el-table-column><el-table-column
+            </el-table-column>
+            <el-table-column
               prop="address"
               label="地址"
               width="200"
               show-overflow-tooltip>
-            </el-table-column><el-table-column
+            </el-table-column>
+            <el-table-column
               prop="address"
               label="地址"
               width="200"
@@ -207,36 +222,36 @@
         <el-button size="mini" icon="el-icon-search">删除</el-button>
         <el-button size="mini" icon="el-icon-search">查看使用情况</el-button>
       </el-row>
-      <div>
-        <el-table
-          ref="multipleTable"
-          :data="tableData"
-          height="136"
-          size="mini"
-          tooltip-effect="dark"
-          style="width: 100%"
-          @selection-change="handleSelectionChange">
-          <el-table-column
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            label="日期"
-            width="120">
-            <template slot-scope="scope">{{ scope.row.date }}</template>
-          </el-table-column>
-          <el-table-column
-            prop="name"
-            label="姓名"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="address"
-            label="地址"
-            show-overflow-tooltip>
-          </el-table-column>
-        </el-table>
-      </div>
+      <el-table
+        ref="multipleTable"
+        :data="tableData"
+        height="136"
+        size="mini"
+        tooltip-effect="dark"
+        style="width: 100%"
+        @row-dblclick="testRowClick"
+        @selection-change="handleSelectionChange">
+        <el-table-column
+          fixed
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column
+          label="日期"
+          width="120">
+          <template slot-scope="scope">{{ scope.row.date }}</template>
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="姓名"
+          width="120">
+        </el-table-column>
+        <el-table-column
+          prop="address"
+          label="地址"
+          show-overflow-tooltip>
+        </el-table-column>
+      </el-table>
     </div>
     <!--  调拨原料  -->
     <div class="transferMaterial">
@@ -257,6 +272,7 @@
           style="width: 100%"
           @selection-change="handleSelectionChange">
           <el-table-column
+            fixed
             type="selection"
             width="55">
           </el-table-column>
@@ -282,10 +298,32 @@
 </template>
 
 <script>
+import replaceRecord from './birtDialog/replaceRecord'
+import brandBalance from './birtDialog/brandBalance'
+import totalBalance from './birtDialog/totalBalance'
+import stemsBalance from './birtDialog/stemsBalance'
+import sendBalance from './birtDialog/sendBalance'
+
 export default {
   name: 'HelloWorld',
+  components: {
+    replaceRecord,
+    brandBalance,
+    totalBalance,
+    stemsBalance,
+    sendBalance
+  },
   data () {
     return {
+      // 记录buttonRow 打开弹窗状态值
+      replaceRecordDialog: false, // 替换记录
+      brandBalanceDialog: false, // 牌号平衡
+      totalBalanceDialog: false, // 全部平衡
+      stemsBalanceDialog: false, // 梗丝平衡
+      sendBalanceDialog: false, // 发送平衡
+      closeDialog: false, // 关闭
+
+      // chooseArea 字段变量
       multipleSelection: [],
       tableData: [{
         date: '2016-05-02',
@@ -324,6 +362,7 @@ export default {
         name: '王小虎',
         address: '上海市普陀区金沙江路 1519 弄'
       }],
+
       balanceName: '', // 平衡名称
       balanceTime: '', // 平衡时间
       productBranch: '', // 生产分厂
@@ -336,7 +375,8 @@ export default {
       balanceTypeOptions: [{
         value: '101',
         label: '初步平衡'
-      }, {
+      },
+      {
         value: '202',
         label: '动平衡'
       }]
@@ -346,6 +386,26 @@ export default {
     this.showParams()
   },
   methods: {
+    // buttonRow中的按钮操作
+    openReplaceRcord () {
+      this.$store.dispatch('replaceRecordDialogAct', true)
+    },
+    openBrandBalance () {
+      this.$store.dispatch('brandBalanceDialogAct', true)
+    },
+    openTotalBalance () {
+      this.$store.dispatch('totalBalanceDialogAct', true)
+    },
+    openStemsBalance () {
+      this.$store.dispatch('stemsBalanceDialogAct', true)
+    },
+    openSendBalance () {
+      this.$store.dispatch('sendBalanceDialogAct', true)
+    },
+    // 测试行内操作
+    testRowClick (row) {
+      console.log(row.name + row.address + row.data)
+    },
     handleSelectionChange (val) {
       this.multipleSelection = val
     },

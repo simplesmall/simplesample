@@ -1,4 +1,9 @@
 const state = {
-  isLogin: false
+  isLogin: false,
+  replaceRecordDialog: false,
+  brandBalanceDialog: false,
+  totalBalanceDialog: false,
+  stemsBalanceDialog: false,
+  sendBalanceDialog: false
 }
 export default state
